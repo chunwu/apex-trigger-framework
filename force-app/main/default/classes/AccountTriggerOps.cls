@@ -1,7 +1,7 @@
 /**
  * Simply a superset of all trigger operations in relation to Account, organised in a top-level class.
  */
-public inherited sharing class AccountTriggerOps {
+public with sharing class AccountTriggerOps {
     public class Validation implements TriggerOp {
         public Boolean isEnabled() {
             return Trigger.isInsert || Trigger.isUpdate;

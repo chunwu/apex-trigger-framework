@@ -19,8 +19,10 @@ trigger AccountTrigger on Account (before insert, before update, before delete, 
 
 Normally the trigger logic should be either in the before or after stage, very unlikely being existent in both. Therefore separating the before and the after concerns is more useful to remove design errors. The TriggerHandler class is common in every trigger. It focuses on the before and after stages and leave the handling of the operation type to each trigger operation. The code is shown as follows:
 ```
-// The common trigger handler that is called by every Apex trigger;
-// Simply delegates the work to their before and after operations.
+/**
+ * The common trigger handler that is called by every Apex trigger.
+ * Simply delegates the work to config's before and after operations.
+ */
 public inherited sharing class TriggerHandler {
     public static void handle(TriggerConfig config) {
         if (!config.isEnabled) return;
@@ -84,7 +86,7 @@ public inherited sharing class TriggerConfig {
 
 The AccountTriggerOps class is simply a superset of all TriggerOperations in relation to the Account, organised in a top-level class.
 ```
-public inherited sharing class AccountTriggerOps {
+public with sharing class AccountTriggerOps {
     public class Validation implements TriggerOperation {
         ......
     }
