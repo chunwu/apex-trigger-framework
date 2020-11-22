@@ -1,0 +1,7 @@
+{
+    "AccountConfig": {
+        "isEnabled": true,
+        "beforeTriggersOpsClassNames": ["AccountTriggerOps.Validation"],
+        "afterTriggerOpsClassNames": ["AccountTriggerOps.UpdateContactDescription"]
+    }
+}
