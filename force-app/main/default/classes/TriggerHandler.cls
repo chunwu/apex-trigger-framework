@@ -2,7 +2,7 @@
  * The common trigger handler that is called by every Apex trigger.
  * Simply delegates the work to config's before and after operations.
  */
-public inherited sharing class TriggerHandler {
+public with sharing class TriggerHandler {
     public static void handle(TriggerConfig config) {
         if (!config.isEnabled) return;
         

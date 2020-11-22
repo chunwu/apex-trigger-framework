@@ -1,6 +1,6 @@
 /**
  * A singleton class that presents the configuration properties of the individual triggers.
- * Instances could be further deserialised from a static resource like JSON files.
+ * Instances are created dynamically from a JSON static resource.
  */
 public inherited sharing class TriggerConfig {
     public Boolean isEnabled {get; set;}
