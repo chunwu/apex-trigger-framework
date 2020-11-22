@@ -63,7 +63,7 @@ public interface TriggerOp {
 Here is the TriggerConfig class that shows various different configurations for different object triggers. It statically instantiates many TriggerConfig objects, each of which is ready to be used in their own trigger.
 ```
 /**
- * A singleton class that presents the configuration properties of the indvidual triggers.
+ * A singleton class that presents the configuration properties of the individual triggers.
  * Instances could be further deserialised from a static resource like JSON files.
  */
 public inherited sharing class TriggerConfig {
