@@ -128,4 +128,14 @@ public with sharing class AccountTriggerOps {
 }
 ```
 
-This is the ![Class Diagram](https://force746.files.wordpress.com/2020/11/apextriggerpattern-5.png).
+The following is the class diagram for quick reference:
+![Class Diagram](https://force746.files.wordpress.com/2020/11/apextriggerpattern-5.png).
+
+In summary, this Apex trigger pattern provides these benefits:
+* Allowing each trigger to be individually switched on/off.
+* Allowing each trigger operation to be individually switched on/off.
+* Promoting consideration of the before and after stages where logic should belong to.
+* Promoting consideration of the changed records that need to be processed.
+* Increased modularity on managing the trigger code.
+* Open for extension for a managed package that uses this pattern.
+* Simple to use (well, subject to the definition of "simple").
