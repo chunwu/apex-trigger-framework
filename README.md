@@ -2,13 +2,12 @@
 An Apex trigger pattern that aims to separate trigger concerns, reduce programmer errors, and improve the modularity while maintaining a simple style.
 
 There are normally these concerns in Apex triggers:
-* Multiple triggers can be defined for the same object.
+* Multiple triggers can be defined for the same object and their execution order is not guaranteed.
 * The before and after stages.
 * Trigger operations: isInsert, isUpdate, isDelete, isUndelete.
-* A bulk of records is involved.
 * Individual trigger processes are normally change-based, i.e. only executed on certain records that have some change.
-* Individual trigger processes may need to be switched on/off in-memory or by a static configuration.
-* Trigger logic mostly deals with a domain problem so it could be executed else where - such as Apex REST API or a batch job.
+* Individual trigger processes may need to be switched on/off.
+* Trigger logic mostly deals with a domain problem so the core logic could be executed else where - such as Apex REST API or a batch job.
 
 It's a widely accepted pattern to have one trigger per object. Further to this, keeping triggers thin has the benefit of leveraging Apex classes to organise the trigger logic. The following code shows how an AccountTrigger is written in such a pattern. It simply delegates its work to a common TriggerHandler class.
 ```
@@ -23,7 +22,7 @@ Normally the trigger logic should be either in the before or after stage, very u
  * The common trigger handler that is called by every Apex trigger.
  * Simply delegates the work to config's before and after operations.
  */
-public inherited sharing class TriggerHandler {
+public with sharing class TriggerHandler {
     public static void handle(TriggerConfig config) {
         if (!config.isEnabled) return;
         
@@ -60,26 +59,73 @@ public interface TriggerOp {
 }
 ```
 
-Here is the TriggerConfig class that shows various different configurations for different object triggers. It statically instantiates many TriggerConfig objects, each of which is ready to be used in their own trigger.
+Here is the TriggerConfig class that shows various different configurations for different object triggers. It dynamically instantiates TriggerConfig records from a JSON static resource so as to further decouple from the individual TriggerOp implementations.
 ```
-/**
- * A singleton class that presents the configuration properties of the individual triggers.
- * Instances could be further deserialised from a static resource like JSON files.
- */
 public inherited sharing class TriggerConfig {
     public Boolean isEnabled {get; set;}
     public TriggerOp[] beforeOps {get; private set;}
     public TriggerOp[] afterOps {get; private set;}
-    
-    public static final TriggerConfig ACCOUNT_CONFIG = new TriggerConfig(
-        	new TriggerOp[] {new AccountTriggerOps.Validation()},
-        	new TriggerOp[] {new AccountTriggerOps.UpdateContactDescription()});
-    // Other object trigger config
-    
-    private TriggerConfig(TriggerOp[] beforeOps, TriggerOp[] afterOps) {
-        this.isEnabled = true;
+
+    private TriggerConfig(Boolean isEnabled, TriggerOp[] beforeOps, TriggerOp[] afterOps) {
+        this.isEnabled = isEnabled;
         this.beforeOps = beforeOps;
         this.afterOps = afterOps;
+    }
+
+    private static final String TRIGGER_CONFIG_RESOURCE_NAME = 'TriggerConfig';
+
+    public static final TriggerConfig ACCOUNT_CONFIG = triggerConfigMap.get('AccountConfig');
+    
+    // Other object trigger config
+    // public static final TriggerConfig CONTACT_CONFIG = getInstance('ContactConfig');
+    
+    private static Map<String, TriggerConfig> triggerConfigMap {
+        get {
+            if (triggerConfigMap == null) {
+                triggerConfigMap = new Map<String, TriggerConfig>();
+                StaticResource[] srs = [select Body from StaticResource where Name = :TRIGGER_CONFIG_RESOURCE_NAME limit 1];
+                if (srs.size() > 0) {
+                    String config = srs[0].Body.toString();
+                    Map<String, TriggerConfigX> triggerConfigMapX = (Map<String, TriggerConfigX>) Json.deserialize(config, Map<String, TriggerConfigX>.class);
+                    for (String name : triggerConfigMapX.keySet()) {
+                        TriggerConfigX tcx = triggerConfigMapX.get(name);
+                        TriggerOp[] beforeOps = newInstancesFrom(tcx.beforeTriggersOpsClassNames);
+                        TriggerOp[] afterOps = newInstancesFrom(tcx.afterTriggerOpsClassNames);
+                        TriggerConfig tc = new TriggerConfig(tcx.isEnabled, beforeOps, afterOps);
+                        triggerConfigMap.put(name, tc);
+                    }
+                }
+            }
+            return triggerConfigMap;
+        }
+        set;
+    }
+
+    private static TriggerOp[] newInstancesFrom(String[] classNames) {
+        TriggerOp[] result = new TriggerOp[] {};
+        for (String className : classNames) {
+            Type t = Type.forName(className);
+            result.add((TriggerOp) t.newInstance());
+        }
+        return result;
+    }
+
+    // A class the JSON static resource is deserialized to
+    private class TriggerConfigX {
+        Boolean isEnabled;
+        String[] beforeTriggersOpsClassNames;
+        String[] afterTriggerOpsClassNames;
+    }
+}
+```
+
+The the static resource TriggerConfig.json is simple like this:
+```
+{
+    "AccountConfig": {
+        "isEnabled": true,
+        "beforeTriggersOpsClassNames": ["AccountTriggerOps.Validation"],
+        "afterTriggerOpsClassNames": ["AccountTriggerOps.UpdateContactDescription"]
     }
 }
 ```
@@ -104,7 +150,3 @@ public with sharing class AccountTriggerOps {
     }
 }
 ```
-
-## Install the unmanaged package
-This repository is in SFDX format.
-An unmanaged package can be intsalled here.

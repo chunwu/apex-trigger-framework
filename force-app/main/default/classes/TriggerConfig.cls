@@ -16,8 +16,9 @@ public inherited sharing class TriggerConfig {
     private static final String TRIGGER_CONFIG_RESOURCE_NAME = 'TriggerConfig';
 
     public static final TriggerConfig ACCOUNT_CONFIG = triggerConfigMap.get('AccountConfig');
-    // public static final TriggerConfig CONTACT_CONFIG = getInstance('ContactConfig');
+    
     // Other object trigger config
+    // public static final TriggerConfig CONTACT_CONFIG = getInstance('ContactConfig');
     
     private static Map<String, TriggerConfig> triggerConfigMap {
         get {
