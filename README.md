@@ -127,3 +127,5 @@ public with sharing class AccountTriggerOps {
     }
 }
 ```
+
+This is the ![Class Diagram](https://force746.files.wordpress.com/2020/11/apextriggerpattern-5.png).
