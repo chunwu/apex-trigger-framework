@@ -1,5 +1,7 @@
 # A simple Apex Trigger pattern
-An Apex trigger pattern that aims to separate trigger concerns, reduce programmer errors, and improve the modularity while maintaining a simple style.
+An Apex trigger pattern that aims to separate trigger concerns, reduce programmer errors, and improve the modularity while maintaining a simple style. The following is the class diagram for quick reference:
+
+![Class Diagram](https://force746.files.wordpress.com/2020/11/apextriggerpattern-5.png).
 
 There are normally these concerns in Apex triggers:
 * Multiple triggers can be defined for the same object and their execution order is not guaranteed.
@@ -127,9 +129,6 @@ public with sharing class AccountTriggerOps {
     }
 }
 ```
-
-The following is the class diagram for quick reference:
-![Class Diagram](https://force746.files.wordpress.com/2020/11/apextriggerpattern-5.png).
 
 In summary, this Apex trigger pattern provides these benefits:
 * Allowing each trigger to be individually switched on/off.
