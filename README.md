@@ -1,5 +1,5 @@
-# A simple Apex Trigger pattern
-An Apex trigger pattern that aims to separate trigger concerns, reduce programmer errors, and improve the modularity while maintaining a simple style. The following is the class diagram for quick reference:
+# A simple Apex trigger framework
+An Apex trigger framework that aims to separate trigger concerns, reduce programmer errors, and improve the modularity while maintaining a simple style. The following is the class diagram for quick reference:
 
 ![Class Diagram](https://force746.files.wordpress.com/2020/11/apextriggerpattern-7.png).
 
@@ -130,11 +130,10 @@ public with sharing class AccountTriggerOps {
 }
 ```
 
-In summary, this Apex trigger pattern provides these benefits:
+In summary, this Apex trigger framework provides these benefits:
 * Allowing each trigger to be individually switched on/off.
 * Allowing each trigger operation to be individually switched on/off.
-* Promoting consideration of the before and after stages where logic should belong to.
+* Promoting consideration of the before and after stages where the logic should belong to.
 * Promoting consideration of the changed records that need to be processed.
-* Increased modularity on managing the trigger code.
-* Open for extension for a managed package that uses this pattern.
+* Increased modularity on managing the code.
 * Simple to use (well, subject to the definition of "simple").
